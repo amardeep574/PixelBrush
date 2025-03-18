@@ -1,14 +1,13 @@
-import { SafeAreaView, StyleSheet, Text, View, Dimensions } from 'react-native'
-import React, { useState } from 'react'
-import LinearGradient from 'react-native-linear-gradient'
-// import customFonts from '../../theme/customFonts'
-import TextInputComp from '../../components/textinputcomp/TextInputComp'
-import GlobalButtonComp from '../../components/button_component/GlobalButtonComp'
+import { SafeAreaView, StyleSheet, Text, View, Dimensions, Alert } from 'react-native';
+import React, { useState } from 'react';
+import LinearGradient from 'react-native-linear-gradient';
+import auth from '@react-native-firebase/auth';  // Import Firebase auth
+import TextInputComp from '../../components/textinputcomp/TextInputComp';
+import GlobalButtonComp from '../../components/button_component/GlobalButtonComp';
 
-const { height, width } = Dimensions.get('screen')
+const { height, width } = Dimensions.get('screen');
 
 const ForgotPassword = ({ navigation }) => {
-
     const [email, setEmail] = useState('');
     const [errors, setErrors] = useState({});
 
@@ -19,28 +18,37 @@ const ForgotPassword = ({ navigation }) => {
         if (!email.trim()) newErrors.email = 'Email is required';
         else if (!emailRegex.test(email)) newErrors.email = 'Invalid email format or domain';
 
-        // if (!password.trim()) newErrors.password = 'Password is required';
-        // else if (password.length < 6) newErrors.password = 'Password must be at least 6 characters';
-
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
-    const handleSubmit = () => {
+
+    const handleSubmit = async () => {
         if (validate()) {
-            console.log('Form submitted:', { email });
-            navigation.navigate('SignIn')
-            // Proceed with authentication logic here
+            try {
+                await auth().sendPasswordResetEmail(email);
+                Alert.alert(
+                    'Password Reset Email Sent',
+                    'Please check your email for instructions to reset your password.',
+                    [{ text: 'OK', onPress: () => navigation.navigate('SignIn') }]
+                );
+            } catch (error) {
+                console.error(error);
+                Alert.alert('Error', 'Failed to send password reset email. Please try again.');
+            }
         }
     };
+
     return (
         <SafeAreaView style={{ flex: 1 }}>
             <LinearGradient colors={['#26525A', '#B4C6D0']} style={styles.gradient}>
                 <View style={styles.container}>
                     <Text style={styles.headingForgotPassword}>Forgot Password</Text>
-                    <Text style={styles.subHeading}>Enter your email address and will sent you the instructions on how to change your password</Text>
+                    <Text style={styles.subHeading}>
+                        Enter your email address and we will send you instructions on how to reset your password.
+                    </Text>
                 </View>
 
-                <View style={styles.emialContainer}>
+                <View style={styles.emailContainer}>
                     <Text style={styles.email}>E-mail</Text>
                     <TextInputComp
                         placeholder="Enter your email"
@@ -52,16 +60,18 @@ const ForgotPassword = ({ navigation }) => {
                     />
                     {errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
                 </View>
-                <GlobalButtonComp title="Submit" style={styles.btn} textStyle={styles.submitBtntText} onPress={handleSubmit} />
+                
+                <GlobalButtonComp title="Submit" style={styles.btn} textStyle={styles.submitBtnText} onPress={handleSubmit} />
+
                 <View style={styles.alreadyAccountStyle}>
                     <Text onPress={() => navigation.navigate('SignIn')} style={styles.alreadyAccountStyleText}>Back to Login</Text>
                 </View>
             </LinearGradient>
         </SafeAreaView>
-    )
-}
+    );
+};
 
-export default ForgotPassword
+export default ForgotPassword;
 
 const styles = StyleSheet.create({
     gradient: {
@@ -88,20 +98,19 @@ const styles = StyleSheet.create({
         width: width,
         textAlign: 'center'
     },
-    emialContainer: {
-        // width: width,
+    emailContainer: {
         padding: 40,
         paddingHorizontal: 60,
     },
     textInputBox: {
         height: height * 0.045,
-        width: width * .78,
+        width: width * 0.78,
         marginVertical: 10,
         borderRadius: 10,
     },
     email: {
         fontFamily: "Montserrat-Regular",
-        fontWeight:'500',
+        fontWeight: '500',
         fontSize: 14,
         lineHeight: 18,
         color: '#FFFFFF',
@@ -112,7 +121,7 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         marginBottom: 20
     },
-    submitBtntText: {
+    submitBtnText: {
         fontFamily: "Montserrat-Bold",
         fontWeight: '600',
         fontSize: 14,
@@ -129,11 +138,9 @@ const styles = StyleSheet.create({
         lineHeight: 18
     },
     alreadyAccountStyleText: {
-        // textDecorationLine: 'underline',
         fontFamily: "Montserrat-Regular",
         fontWeight: '500',
         color: '#234B52',
-        fontWeight: '500',
         fontSize: 12,
         lineHeight: 18,
     },
@@ -150,4 +157,4 @@ const styles = StyleSheet.create({
         marginTop: -10,
         marginBottom: 10,
     },
-})
+});

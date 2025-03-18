@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import LinearGradient from 'react-native-linear-gradient';
 import TextInputComp from '../../components/textinputcomp/TextInputComp';
 import GlobalButtonComp from '../../components/button_component/GlobalButtonComp';
+import auth from '@react-native-firebase/auth';
 
 const { height, width } = Dimensions.get('screen');
 
@@ -10,6 +11,7 @@ const SignIn = ({ navigation }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [errors, setErrors] = useState({});
+    const [loading, setLoading] = useState(false);
 
     const validate = () => {
         let newErrors = {};
@@ -25,11 +27,20 @@ const SignIn = ({ navigation }) => {
         return Object.keys(newErrors).length === 0;
     };
 
-    const handleSubmit = () => {
+    const handleSignIn = async () => {
         if (validate()) {
-            console.log('Form submitted:', { email, password });
-            navigation.navigate('Home');
-            // Proceed with authentication logic here
+            setLoading(true);
+            try {
+                const userCredential = await auth().signInWithEmailAndPassword(email, password);
+                console.log('User signed in:', userCredential.user);
+                alert('Sign-In Successful');
+                navigation.navigate('Home'); // Navigate to Home screen after successful login
+            } catch (error) {
+                console.error('Error signing in:', error.message);
+                alert(error.message);
+            } finally {
+                setLoading(false);
+            }
         }
     };
 
@@ -38,7 +49,7 @@ const SignIn = ({ navigation }) => {
             <LinearGradient colors={['#26525A', '#B4C6D0']} style={styles.gradient}>
                 <View style={[styles.container, { width: width }]}> 
                     <Text style={styles.headingSignIn}>Sign In</Text>
-                    <Text style={styles.subHeading}>Hii! Welcome back, you’ve been missed</Text>
+                    <Text style={styles.subHeading}>Hi! Welcome back, you’ve been missed</Text>
                 </View>
 
                 <View style={styles.emailContainer}>
@@ -70,7 +81,13 @@ const SignIn = ({ navigation }) => {
                     </TouchableOpacity>
                 </View>
 
-                <GlobalButtonComp title="Sign In" style={styles.btn} textStyle={styles.signupTextStyle} onPress={handleSubmit} />
+                <GlobalButtonComp 
+                    title={loading ? "Signing In..." : "Sign In"} 
+                    style={styles.btn} 
+                    textStyle={styles.signupTextStyle} 
+                    onPress={handleSignIn} 
+                    disabled={loading}
+                />
 
                 <View style={styles.alreadyAccountStyle}>
                     <Text style={styles.dontHaveAccount}>Don’t have an account?</Text>

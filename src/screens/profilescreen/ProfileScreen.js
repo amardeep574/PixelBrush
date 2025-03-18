@@ -13,7 +13,7 @@ const ProfileScreen = () => {
     { icon: 'phone', text: 'Contact', type: 'MaterialIcons' },
     { icon: 'email', text: 'Email', type: 'MaterialIcons' },
     { icon: 'address', text: 'Address', type: 'Entypo' },
-    { icon: 'settings', text: 'Setting', type: 'MaterialIcons' },
+    { icon: 'logout', text: 'logout', type: 'MaterialIcons' },
   ];
 
   return (

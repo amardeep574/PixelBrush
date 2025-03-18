@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "178775669834",
+    "project_id": "pixel-brush-be81e",
+    "storage_bucket": "pixel-brush-be81e.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:178775669834:android:c5e8897b081a1ac049fab3",
+        "android_client_info": {
+          "package_name": "com.uncle_john"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDrIHaR4xwELEsum4sRM6cHZzlfqlvtQ8I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -11,7 +11,7 @@ import Prep from '../screens/prep/Prep'
 import PastworkHistory from '../screens/pastwork_history/PastworkHistory'
 import HomeScreen from '../screens/homescreen/HomeScreen'
 import ProfileScreen from '../screens/profilescreen/ProfileScreen'
-import LazyLoading from '../screens/lazy_loading/LazyLoading'
+
 
 
 
@@ -37,7 +37,6 @@ const AppNavigation = () => {
         <Stack.Screen name='PastworkHistory' component={PastworkHistory} options={{headerShown:false}} />
         <Stack.Screen name='Home' component={HomeScreen} options={{headerShown:false}}  />
         <Stack.Screen name='Profile' component={ProfileScreen} options={{headerShown:false}} />
-        {/* <Stack.Screen name='LazyLoading' component={LazyLoading} options={{headerShown:false}} /> */}
       
       </Stack.Navigator>
     </NavigationContainer>

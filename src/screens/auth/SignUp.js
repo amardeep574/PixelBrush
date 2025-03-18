@@ -4,12 +4,14 @@ import LinearGradient from 'react-native-linear-gradient';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import TextInputComp from '../../components/textinputcomp/TextInputComp';
 import GlobalButtonComp from '../../components/button_component/GlobalButtonComp';
+import auth from '@react-native-firebase/auth';
 
 const { height, width } = Dimensions.get('screen');
 
 const SignUp = ({ navigation }) => {
     const [isChecked, setIsChecked] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
+    const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [errors, setErrors] = useState({});
@@ -19,20 +21,33 @@ const SignUp = ({ navigation }) => {
         let newErrors = {};
         const emailRegex = /^[a-zA-Z0-9._%+-]+@(gmail\.com|yahoo\.com|outlook\.com)$/;
 
+        if (!name.trim()) newErrors.name = 'Name is required';
+
         if (!email.trim()) newErrors.email = 'Email is required';
         else if (!emailRegex.test(email)) newErrors.email = 'Invalid email format or domain';
 
         if (!password.trim()) newErrors.password = 'Password is required';
         else if (password.length < 6) newErrors.password = 'Password must be at least 6 characters';
 
+        if (!isChecked) newErrors.terms = 'You must agree to the terms';
+
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
 
-    // Handle form submission
-    const handleSubmit = () => {
+    // Handle SignUp with Firebase
+    const handleSubmit = async () => {
         if (validate()) {
-            console.log('Form submitted:', { email, password });
+            try {
+                const userCredential = await auth().createUserWithEmailAndPassword(email, password);
+                await userCredential.user.updateProfile({ displayName: name });
+                console.log('User signed up:', userCredential.user);
+                alert('Sign-Up Successful');
+                navigation.navigate('SignIn');
+            } catch (error) {
+                console.error('Error signing up:', error.message);
+                alert(error.message);
+            }
         }
     };
 
@@ -51,7 +66,10 @@ const SignUp = ({ navigation }) => {
                         placeholder="Enter your name"
                         style={styles.textInputBox}
                         placeholderTextColor="#535C60"
+                        value={name}
+                        onChangeText={setName}
                     />
+                    {errors.name && <Text style={styles.errorText}>{errors.name}</Text>}
 
                     {/* Email Input */}
                     <Text style={styles.label}>E-mail</Text>
@@ -60,7 +78,7 @@ const SignUp = ({ navigation }) => {
                         style={styles.textInputBox}
                         placeholderTextColor="#535C60"
                         value={email}
-                        onChangeText={(text) => setEmail(text)}
+                        onChangeText={setEmail}
                     />
                     {errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
 
@@ -72,7 +90,7 @@ const SignUp = ({ navigation }) => {
                         style={styles.textInputBox}
                         placeholderTextColor="#535C60"
                         value={password}
-                        onChangeText={(text) => setPassword(text)}
+                        onChangeText={setPassword}
                         icon={showPassword ? 'visibility-off' : 'visibility'}
                         onIconPress={() => setShowPassword(!showPassword)}
                     />
