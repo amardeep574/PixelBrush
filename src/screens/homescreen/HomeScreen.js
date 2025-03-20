@@ -1,9 +1,9 @@
+
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Dimensions, FlatList, Image, SafeAreaView } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import HeaderComponent from '../../components/headercomponent/HeaderComponent';
 import { useNavigation } from '@react-navigation/native';
-// import customFonts from '../../theme/customFonts';
 
 const { width } = Dimensions.get('screen');
 
@@ -17,14 +17,20 @@ const menuItems = [
   { id: 7, label: 'Special cons', image: require('../../assets/images/special_cons.png') },
   { id: 8, label: 'Railing', image: require('../../assets/images/railing.png') },
 ];
-                                                                                                                              
+
+const pastWorkItems = [
+  { id: 1, name: 'John', details: 'Create New Details', image: require('../../assets/images/profile_img.png') },
+  { id: 2, name: 'John', details: 'Create New Details', image: require('../../assets/images/profile_img.png') },
+  { id: 3, name: 'John', details: 'Create New Details', image: require('../../assets/images/profile_img.png') },
+  { id: 4, name: 'John', details: 'Create New Details', image: require('../../assets/images/profile_img.png') },
+];
+
 export default function HomeScreen() {
   const navigation = useNavigation();
   const [currentScreen, setCurrentScreen] = useState('home');
   const [selectedBox, setSelectedBox] = useState(null);
 
   const navigateToScreen = (label) => {
-    console.log({ label })
     navigation.navigate('Prep', { label });
   };
 
@@ -37,28 +43,27 @@ export default function HomeScreen() {
           headerStyle={styles.header}
           titleStyle={styles.title}
           profileOnPress={() => navigation.navigate('Profile')}
-          // profileOnPress={() => navigation.navigate('LazyLoading')}
         />
 
         <View style={styles.tabContainer}>
           <TouchableOpacity
             style={[styles.tabButton, currentScreen === 'home' && styles.activeTab]}
-            onPress={() => setCurrentScreen('home')}
-          >
+            onPress={() => setCurrentScreen('home')}>
             <Text style={[styles.tabText, currentScreen === 'home' && styles.activeTabText]}>Start New Work</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
             style={[styles.tabButton, currentScreen === 'history' && styles.activeTab]}
-            onPress={() => navigation.navigate('PastworkHistory')}
-          >
+            onPress={() => setCurrentScreen('history')}>
             <Text style={[styles.tabText, currentScreen === 'history' && styles.activeTabText]}>Past Work History</Text>
           </TouchableOpacity>
         </View>
 
         {currentScreen === 'home' && (
-          <StartNewWork selectedBox={selectedBox} setSelectedBox={setSelectedBox} navigateToScreen={(label) => navigateToScreen(label)} />
+          <StartNewWork selectedBox={selectedBox} setSelectedBox={setSelectedBox} navigateToScreen={navigateToScreen} />
         )}
+
+        {currentScreen === 'history' && <PastWorkHistory navigation={navigation} />}
       </LinearGradient>
     </SafeAreaView>
   );
@@ -79,16 +84,37 @@ const StartNewWork = ({ selectedBox, setSelectedBox, navigateToScreen }) => {
         renderItem={({ item }) => (
           <TouchableOpacity
             style={[styles.box, selectedBox === item.id && styles.activeBox]}
-            onPress={() => handleBoxPress(item)}
-          >
+            onPress={() => handleBoxPress(item)}>
             <Image source={item.image} resizeMode='contain' style={styles.img} />
-            <Text style={[styles.boxText, selectedBox === item.id && styles.activeBoxText]}>
-              {item.label}
-            </Text>
+            <Text style={[styles.boxText, selectedBox === item.id && styles.activeBoxText]}>{item.label}</Text>
           </TouchableOpacity>
         )}
       />
+    </View>
+  );
+};
 
+const PastWorkHistory = ({ navigation }) => {
+  const handlePress = (item) => {
+    navigation.navigate('DisplayPastHistory', { item });
+  };
+
+  return (
+    <View style={styles.pastWorkContainer}>
+      <FlatList
+        data={pastWorkItems}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={({ item }) => (
+          <TouchableOpacity onPress={() => handlePress(item)} style={styles.pastWorkItem}>
+            <Image source={item.image} style={styles.profileImg} />
+            <View style={styles.pastWorkTextContainer}>
+              <Text style={styles.pastWorkName}>{item.name}</Text>
+              <Text style={styles.pastWorkDetails}>{item.details}</Text>
+            </View>
+            <Text style={styles.arrow}>&gt;</Text>
+          </TouchableOpacity>
+        )}
+      />
     </View>
   );
 };
@@ -124,18 +150,14 @@ const styles = StyleSheet.create({
     paddingVertical: 12
   },
   tabText: {
-    fontFamily: "Montserrat-Regular",
     fontSize: 12,
     color: '#9BAFB3',
-    fontFamily: '400',
-    textAlign: 'center'
+    textAlign: 'center',
+    fontFamily: "Montserrat-Regular",
   },
   activeTabText: {
     color: '#FFFFFF',
-    fontWeight: '400',
-    fontSize: 12,
-    lineHeight: 18,
-    textAlign: 'center',
+    fontWeight: '600',
     fontFamily: "Montserrat-Regular",
   },
   menuContainer: {
@@ -159,7 +181,6 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     fontSize: 10,
     textAlign: 'center',
-    lineHeight: 10,
     marginVertical: 5,
     fontFamily: "Montserrat-Medium",
   },
@@ -168,7 +189,6 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     fontSize: 10,
     textAlign: 'center',
-    lineHeight: 10,
     marginVertical: 5,
     fontFamily: "Montserrat-Medium",
   },
@@ -177,4 +197,43 @@ const styles = StyleSheet.create({
     height: 25,
     marginVertical: 5
   },
+  pastWorkContainer: {
+    paddingHorizontal: 10,
+    paddingTop: 20
+  },
+  pastWorkItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#234B52',
+    width:width*.95,
+    padding: 12,
+    borderRadius: 10,
+    marginBottom: 10
+  },
+  profileImg: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    marginRight: 10
+  },
+  pastWorkTextContainer: {
+    flex: 1
+  },
+  pastWorkName: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#FFFFFF',
+    fontFamily: "Montserrat-Medium",
+  },
+  pastWorkDetails: {
+    fontSize: 11,
+    color: '#9BAFB3',
+    fontFamily: "Montserrat-Regular",
+    fontWeight:'400'
+  },
+  arrow: {
+    fontSize: 18,
+    color: '#FFFFFF'
+  }
 });
+
