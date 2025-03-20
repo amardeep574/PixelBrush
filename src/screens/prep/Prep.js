@@ -117,10 +117,6 @@ export default Prep;
 const styles = StyleSheet.create({
     safeAreaViewContainer: { flex: 1, width: width },
     gradient: { flex: 1 },
-    // header: { backgroundColor: '#152D32' },
-    // headerTitle: { fontWeight: '600', fontSize: 18, color: '#FFFFFF' },
-    // inputContainer: { padding: 20 },
-    // input: { marginBottom: 10, backgroundColor: '#D9D9D9', borderRadius: 8, padding: 10 },
     inputPlaceholder: {
         fontFamily: "Montserrat-Regular",
         fontWeight: '400',
@@ -187,8 +183,8 @@ const styles = StyleSheet.create({
         paddingHorizontal: 24,
         marginVertical: 8,
     },
-    addressContainer:{
-        marginBottom:10
+    addressContainer: {
+        marginBottom: 10
     },
     textInputAddress: {
         width: width * 0.9,
