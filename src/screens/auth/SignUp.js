@@ -36,20 +36,47 @@ const SignUp = ({ navigation }) => {
     };
 
     // Handle SignUp with Firebase
-    const handleSubmit = async () => {
-        if (validate()) {
-            try {
-                const userCredential = await auth().createUserWithEmailAndPassword(email, password);
-                await userCredential.user.updateProfile({ displayName: name });
-                console.log('User signed up:', userCredential.user);
-                alert('Sign-Up Successful');
-                navigation.navigate('SignIn');
-            } catch (error) {
-                console.error('Error signing up:', error.message);
-                alert(error.message);
-            }
+    // const handleSubmit = async () => {
+    //     if (validate()) {
+    //         try {
+    //             const userCredential = await auth().createUserWithEmailAndPassword(email, password);
+    //             await userCredential.user.updateProfile({ displayName: name });
+    //             console.log('User signed up:', userCredential.user);
+    //             alert('Sign-Up Successful');
+    //             navigation.navigate('SignIn');
+    //         } catch (error) {
+    //             console.error('Error signing up:', error.message);
+    //             alert(error.message);
+    //         }
+    //     }
+    // };
+
+
+const handleSubmit = async () => {
+    if (validate()) {
+        try {
+            const userCredential = await auth().createUserWithEmailAndPassword(email, password);
+            const user = userCredential.user;
+
+            // Authentication me name set karna
+            await user.updateProfile({ displayName: name });
+
+            // 🔥 Firestore me name save karna
+            await firestore().collection('users').doc(user.uid).set({
+                name: name, // Firestore me store kar rahe hain
+                email: user.email,
+                profileImage: null // Default profile image
+            });
+
+            console.log('User signed up:', userCredential.user);
+            alert('Sign-Up Successful');
+            navigation.navigate('SignIn');
+        } catch (error) {
+            console.error('Error signing up:', error.message);
+            alert(error.message);
         }
-    };
+    }
+};
 
     return (
         <SafeAreaView style={{ flex: 1 }}>

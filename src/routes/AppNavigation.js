@@ -8,10 +8,9 @@ import SignIn from '../screens/auth/SignIn'
 import SignUp from "../screens/auth/SignUp"
 import ForgotPassword from '../screens/auth/ForgotPassword'
 import Prep from '../screens/prep/Prep'
-import PastworkHistory from '../screens/pastwork_history/PastworkHistory'
 import HomeScreen from '../screens/homescreen/HomeScreen'
 import ProfileScreen from '../screens/profilescreen/ProfileScreen'
-import DisplayPastHistory from '../screens/pastwork_history/DisplayPastHistory'
+import Toast from 'react-native-toast-message';
 
 
 
@@ -35,13 +34,13 @@ const AppNavigation = () => {
         <Stack.Screen name='SignUp' component={SignUp} options={{headerShown:false}} />
         <Stack.Screen name='ForgotPassword' component={ForgotPassword} options={{headerShown:false}} />
         <Stack.Screen name='Prep' component={Prep}  options={{headerShown:false}}/>
-        <Stack.Screen name='PastworkHistory' component={PastworkHistory} options={{headerShown:false}} />
         <Stack.Screen name='Home' component={HomeScreen} options={{headerShown:false}}  />
         <Stack.Screen name='Profile' component={ProfileScreen} options={{headerShown:false}} />
-        <Stack.Screen name='DisplayPastHistory' component={DisplayPastHistory} options={{headerShown:false}} />
+        {/* <Stack.Screen name='DisplayPastHistory' component={DisplayPastHistory} options={{headerShown:false}} /> */}
       
       
       </Stack.Navigator>
+      <Toast />
     </NavigationContainer>
   )
 }

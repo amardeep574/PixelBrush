@@ -12,7 +12,7 @@
     "debug:build:android": "npx react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/src/main/res && cd android && ./gradlew app:assembleDebug"
   },
   "dependencies": {
-    "@react-native-async-storage/async-storage": "^2.1.1",
+    "@react-native-async-storage/async-storage": "^2.1.2",
     "@react-native-firebase/app": "^21.12.0",
     "@react-native-firebase/auth": "^21.12.0",
     "@react-native-firebase/firestore": "^21.12.0",
@@ -24,12 +24,14 @@
     "react": "18.3.1",
     "react-native": "0.77.1",
     "react-native-gesture-handler": "^2.23.1",
+    "react-native-get-random-values": "^1.11.0",
     "react-native-image-picker": "^8.1.0",
     "react-native-linear-gradient": "^2.8.3",
     "react-native-paper": "^5.13.1",
     "react-native-reanimated": "^3.16.7",
     "react-native-safe-area-context": "^5.2.0",
     "react-native-screens": "^4.6.0",
+    "react-native-toast-message": "^2.2.1",
     "react-native-vector-icons": "^10.2.0"
   },
   "devDependencies": {

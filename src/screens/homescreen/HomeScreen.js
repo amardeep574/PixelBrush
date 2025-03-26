@@ -1,9 +1,12 @@
 
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Dimensions, FlatList, Image, SafeAreaView } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import HeaderComponent from '../../components/headercomponent/HeaderComponent';
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import firestore from '@react-native-firebase/firestore';
+
+
 
 const { width } = Dimensions.get('screen');
 
@@ -30,6 +33,7 @@ export default function HomeScreen() {
   const [currentScreen, setCurrentScreen] = useState('home');
   const [selectedBox, setSelectedBox] = useState(null);
 
+
   const navigateToScreen = (label) => {
     navigation.navigate('Prep', { label });
   };
@@ -39,7 +43,7 @@ export default function HomeScreen() {
       <LinearGradient colors={['#26525A', '#B4C6D0']} style={styles.container}>
         <HeaderComponent
           title={'Home'}
-          profileImage={require('../../assets/images/profile_img.png')}
+          // profileImage={require('../../assets/images/profile_img.png')}
           headerStyle={styles.header}
           titleStyle={styles.title}
           profileOnPress={() => navigation.navigate('Profile')}
@@ -95,27 +99,86 @@ const StartNewWork = ({ selectedBox, setSelectedBox, navigateToScreen }) => {
 };
 
 const PastWorkHistory = ({ navigation }) => {
+  const [pastWorkData, setPastWorkData] = useState([]);
+  
+  
+  // useEffect(() => {
+  //   fetchData()
+  // }, [])
+
+  // const fetchData = async () => {
+  //   try {
+  //     const doc = await firestore().collection("prepForms").get();
+  //     console.log("prep");
+
+  //     console.log("prep--data", doc._docs)
+  //     if (doc.exists) {
+  //       console.log("prep");
+
+  //       console.log("prep--data", doc.data())
+  //     } else {
+  //       Alert.alert('Error', 'Document not found!');
+  //     }
+  //   } catch (error) {
+  //     Alert.alert('Error', 'Failed to fetch data.');
+  //   }
+  // };
+  
+  // useEffect(() => {
+  //   const fetchPastWork = async () => {
+  //     try {
+  //       const snapshot = await firestore().collection("formData").get();
+  //       const fetchedData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  //       setPastWorkData(fetchedData);
+  //     } catch (error) {
+  //       console.error("Error fetching past work data:", error);
+  //     }
+  //   };
+
+  //   fetchPastWork();
+  // }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      const fetchPastWork = async () => {
+        try {
+          const snapshot = await firestore().collection("formData").get();
+          const fetchedData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+          setPastWorkData(fetchedData);
+        } catch (error) {
+          console.error("Error fetching past work data:", error);
+        }
+      };
+
+      fetchPastWork();
+    }, [])
+  );
+
   const handlePress = (item) => {
     navigation.navigate('DisplayPastHistory', { item });
   };
 
   return (
-    <View style={styles.pastWorkContainer}>
+    <SafeAreaView style={styles.containerPastWork}>
       <FlatList
-        data={pastWorkItems}
-        keyExtractor={(item) => item.id.toString()}
+        data={pastWorkData}
+        keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <TouchableOpacity onPress={() => handlePress(item)} style={styles.pastWorkItem}>
-            <Image source={item.image} style={styles.profileImg} />
-            <View style={styles.pastWorkTextContainer}>
-              <Text style={styles.pastWorkName}>{item.name}</Text>
-              <Text style={styles.pastWorkDetails}>{item.details}</Text>
+          <TouchableOpacity 
+            style={styles.itemContainer} 
+            onPress={() => navigation.navigate('Prep', { docId: item.id, label: 'Prep' })}
+          >
+            <Image source={{ uri: item.images?.[0] || 'https://via.placeholder.com/50' }} style={styles.image} />
+            <View style={styles.textContainer}>
+              <Text style={styles.projectName}>{item.projectName}</Text>
+              {/* <Text style={styles.jobContact}>{item.jobContact}</Text> */}
+              <Text style={styles.address}>{item.address}</Text>
             </View>
-            <Text style={styles.arrow}>&gt;</Text>
           </TouchableOpacity>
         )}
       />
-    </View>
+    </SafeAreaView>
+
   );
 };
 
@@ -205,7 +268,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#234B52',
-    width:width*.95,
+    width: width * .95,
     padding: 12,
     borderRadius: 10,
     marginBottom: 10
@@ -229,11 +292,25 @@ const styles = StyleSheet.create({
     fontSize: 11,
     color: '#9BAFB3',
     fontFamily: "Montserrat-Regular",
-    fontWeight:'400'
+    fontWeight: '400'
   },
   arrow: {
     fontSize: 18,
     color: '#FFFFFF'
-  }
+  },
+  containerPastWork: { flex: 1, padding: 10 },
+  itemContainer: {
+    flexDirection: 'row',
+    backgroundColor: '#26525A',
+    padding: 10,
+    marginVertical: 5,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  image: { width: 50, height: 50, borderRadius: 8, marginRight: 10 },
+  textContainer: { flex: 1 },
+  projectName: { fontWeight: '600', fontSize: 13,fontFamily:"Montserrat-Medium",color:'#FFFFFF' },
+  jobContact: { fontSize: 12, color: 'gray' },
+  address: { fontSize: 10, color: '#FFFFFF' ,fontFamily:"Montserrat-Regular",fontWeight:"500"},
 });
 

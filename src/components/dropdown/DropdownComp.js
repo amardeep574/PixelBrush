@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, FlatList, Dimensions, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -8,20 +7,20 @@ import GlobalButtonComp from '../../components/button_component/GlobalButtonComp
 
 const { width, height } = Dimensions.get('screen');
 
-const DropdownComp = ({ title, fields, onValuesChange, initialValues }) => {
+const DropdownComp = ({ title, fields, onValuesChange, initialValues, collectionName }) => {
   const [expanded, setExpanded] = useState(false);
   const [values, setValues] = useState(
     initialValues || fields.reduce((acc, field) => ({ ...acc, [field]: '' }), {})
   );
-  const [total, setTotal] = useState(initialValues?.total || '0');
-  const [finalTotal, setFinalTotal] = useState(initialValues?.finalTotal || '0');
-  const [docId, setDocId] = useState(null); // Store document ID for update/delete
+  const [total, setTotal] = useState(initialValues?.total || '');
+  const [finalTotal, setFinalTotal] = useState(initialValues?.finalTotal || '');
+  const [docId, setDocId] = useState(null);
 
   useEffect(() => {
     if (initialValues) {
       setValues(initialValues);
-      setTotal(initialValues.total || '0');
-      setFinalTotal(initialValues.finalTotal || '0');
+      setTotal(initialValues.total?.toString() || '');
+      setFinalTotal(initialValues.finalTotal?.toString() || '');
     }
   }, [initialValues]);
 
@@ -35,21 +34,28 @@ const DropdownComp = ({ title, fields, onValuesChange, initialValues }) => {
 
   const calculateTotals = (updatedValues) => {
     const numericFields = ['bldg1', 'bldg2', 'bldg3', 'bldg4'];
-    let sum = numericFields.reduce((total, field) => total + (parseFloat(updatedValues[field]) || 0), 0);
-    let rate = parseFloat(updatedValues['rate/hour']) || 0;
-    let final = sum * rate;
+    const sum = numericFields.reduce((acc, field) => acc + (parseFloat(updatedValues[field]) || 0), 0);
+    const rate = parseFloat(updatedValues['rate/hour']) || 0;
+    const final = sum * rate;
 
-    setTotal(sum.toFixed(2));
-    setFinalTotal(final.toFixed(2));
+    const newTotal = sum > 0 ? sum.toString() : '';
+    const newFinalTotal = final > 0 ? final.toString() : '';
 
-    onValuesChange(title, { ...updatedValues, total: sum.toFixed(2), finalTotal: final.toFixed(2) });
+    setTotal(newTotal);
+    setFinalTotal(newFinalTotal);
+
+    onValuesChange(title, {
+      ...updatedValues,
+      total: newTotal,
+      finalTotal: newFinalTotal,
+    });
   };
 
-  const fetchPreviousData = async (field) => {
+  const fetchPreviousData = async () => {
     try {
       const querySnapshot = await firestore()
-        .collection('prepForms')
-        .where(`tasks.${title}.${field}`, '!=', '')
+        .collection("formData")
+        .where(`tasks.${title}`, '!=', null) // Check if the task exists
         .limit(1)
         .get();
       if (!querySnapshot.empty) {
@@ -57,24 +63,26 @@ const DropdownComp = ({ title, fields, onValuesChange, initialValues }) => {
         setDocId(doc.id);
         const data = doc.data().tasks[title];
         setValues(data);
-        setTotal(data.total || '0');
-        setFinalTotal(data.finalTotal || '0');
+        console.log("DOC DATA--->", doc.data())
+        setTotal(data.total?.toString() || '');
+        setFinalTotal(data.finalTotal?.toString() || '');
+        calculateTotals(data);
         Alert.alert('Success', 'Previous data loaded. Modify and save using the Update button.');
       } else {
-        Alert.alert('Info', 'No previous data found for this field.');
+        Alert.alert('Info', 'No previous data found for this dropdown.');
       }
     } catch (error) {
       Alert.alert('Error', 'Failed to fetch data: ' + error.message);
     }
   };
 
-  const handleUpdate = async (field) => {
+  const handleUpdate = async () => {
     if (!docId) {
       Alert.alert('Error', 'No document selected. Fetch previous data first.');
       return;
     }
     try {
-      await firestore().collection('prepForms').doc(docId).update({
+      await firestore().collection("formData").doc(docId).update({
         [`tasks.${title}`]: { ...values, total, finalTotal },
       });
       Alert.alert('Success', 'Data updated successfully!');
@@ -83,21 +91,23 @@ const DropdownComp = ({ title, fields, onValuesChange, initialValues }) => {
     }
   };
 
-  const handleDelete = async (field) => {
+  const handleDelete = async () => {
     if (!docId) {
       Alert.alert('Error', 'No document selected to delete.');
       return;
     }
     try {
-      await firestore().collection('prepForms').doc(docId).update({
-        [`tasks.${title}.${field}`]: firestore.FieldValue.delete(),
+      await firestore().collection("formData").doc(docId).update({
+        [`tasks.${title}`]: firestore.FieldValue.delete(), // Delete the entire task
       });
-      const updatedValues = { ...values, [field]: '' };
-      setValues(updatedValues);
-      calculateTotals(updatedValues);
-      Alert.alert('Success', 'Field deleted successfully!');
+      setValues(fields.reduce((acc, field) => ({ ...acc, [field]: '' }), {}));
+      setTotal('');
+      setFinalTotal('');
+      setDocId(null);
+      onValuesChange(title, { ...values, total: '', finalTotal: '' });
+      Alert.alert('Success', 'Dropdown data deleted successfully!');
     } catch (error) {
-      Alert.alert('Error', 'Failed to delete field: ' + error.message);
+      Alert.alert('Error', 'Failed to delete data: ' + error.message);
     }
   };
 
@@ -124,37 +134,38 @@ const DropdownComp = ({ title, fields, onValuesChange, initialValues }) => {
                         ? finalTotal
                         : values[item] || ''
                   }
-                  onChangeText={(text) => handleInputChange(item, text)}
+                  onChangeText={(text) =>
+                    item !== 'total' && item !== 'final total' && handleInputChange(item, text)
+                  }
                   style={styles.input}
                   inputStyle={styles.inputText}
                   keyboardType="numeric"
-                  editable={!(item === 'total' || item === 'final total')}
+                  editable={item !== 'total' && item !== 'final total'}
                 />
-                {item !== 'total' && item !== 'final total' && (
-                  <View style={styles.buttonContainer}>
-                    <GlobalButtonComp
-                      title="Fetch"
-                      onPress={() => fetchPreviousData(item)}
-                      style={styles.smallBtn}
-                      textStyle={styles.btnTextStyle}
-                    />
-                    <GlobalButtonComp
-                      title="Update"
-                      onPress={() => handleUpdate(item)}
-                      style={[styles.smallBtn, { backgroundColor: '#26525A' }]}
-                      textStyle={styles.btnTextStyle}
-                    />
-                    <GlobalButtonComp
-                      title="Delete"
-                      onPress={() => handleDelete(item)}
-                      style={[styles.smallBtn, { backgroundColor: '#26525A' }]}
-                      textStyle={styles.btnTextStyle}
-                    />
-                  </View>
-                )}
               </View>
             )}
           />
+          <View style={styles.buttonContainer}>
+            <GlobalButtonComp
+              title="Edit"
+              onPress={fetchPreviousData}
+              style={styles.smallBtn}
+              textStyle={styles.btnTextStyle}
+            />
+            <GlobalButtonComp
+              title="Update"
+              onPress={handleUpdate}
+              style={[styles.smallBtn, { backgroundColor: '#26525A' }]}
+              textStyle={styles.btnTextStyle}
+            />
+            <GlobalButtonComp
+              title="Delete"
+              onPress={handleDelete}
+              style={[styles.smallBtn, { backgroundColor: '#26525A' }]}
+              textStyle={styles.btnTextStyle}
+            />
+          </View>
+          
         </View>
       )}
     </View>
@@ -199,7 +210,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#D9D9D9',
     borderRadius: 8,
     height: height * 0.042,
-    width: width * 0.40, // Adjusted width to fit additional button
+    width: width * 0.85, // Wider input since buttons are moved
     marginRight: 5,
   },
   inputText: {
@@ -210,19 +221,22 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginTop: 10,
   },
   smallBtn: {
-    width: width * 0.14,
+    width: width * 0.25, // Slightly wider buttons for better readability
     height: height * 0.04,
     borderRadius: 5,
     backgroundColor: '#26525A',
-    marginHorizontal: 2,
   },
   btnTextStyle: {
-    fontFamily: "Montserrat-Regular",
+    fontFamily: 'Montserrat-Regular',
     fontWeight: '500',
-    fontSize: 10
-  }
+    fontSize: 10,
+  },
 });
 
 export default DropdownComp;
+
+
