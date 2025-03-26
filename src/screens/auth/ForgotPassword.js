@@ -4,6 +4,8 @@ import LinearGradient from 'react-native-linear-gradient';
 import auth from '@react-native-firebase/auth';  // Import Firebase auth
 import TextInputComp from '../../components/textinputcomp/TextInputComp';
 import GlobalButtonComp from '../../components/button_component/GlobalButtonComp';
+import Toast from 'react-native-toast-message';
+
 
 const { height, width } = Dimensions.get('screen');
 
@@ -22,18 +24,45 @@ const ForgotPassword = ({ navigation }) => {
         return Object.keys(newErrors).length === 0;
     };
 
+    // const handleSubmit = async () => {
+    //     if (validate()) {
+    //         try {
+    //             await auth().sendPasswordResetEmail(email);
+    //             Alert.alert(
+    //                 'Password Reset Email Sent',
+    //                 'Please check your email for instructions to reset your password.',
+    //                 [{ text: 'OK', onPress: () => navigation.navigate('SignIn') }]
+    //             );
+    //         } catch (error) {
+    //             console.error(error);
+    //             Alert.alert('Error', 'Failed to send password reset email. Please try again.');
+    //         }
+    //     }
+    // };
+
+
     const handleSubmit = async () => {
         if (validate()) {
             try {
                 await auth().sendPasswordResetEmail(email);
-                Alert.alert(
-                    'Password Reset Email Sent',
-                    'Please check your email for instructions to reset your password.',
-                    [{ text: 'OK', onPress: () => navigation.navigate('SignIn') }]
-                );
+                Toast.show({
+                    type: 'success',
+                    text1: 'Email Sent',
+                    text2: 'Check your email for password reset instructions.',
+                    position: 'top',
+                    visibilityTime: 4000,
+                    autoHide: true,
+                });
+                setTimeout(() => navigation.navigate('SignIn'), 3000);
             } catch (error) {
-                console.error(error);
-                Alert.alert('Error', 'Failed to send password reset email. Please try again.');
+                Toast.show({
+                    type: 'error',
+                    text1: 'Error',
+                    text2: 'Failed to send password reset email. Please try again.',
+                    position: 'top',
+                    visibilityTime: 4000,
+                    autoHide: true,
+                });
             }
         }
     };

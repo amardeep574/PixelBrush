@@ -236,6 +236,7 @@ import TextInputComp from '../../components/textinputcomp/TextInputComp';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import { launchImageLibrary } from 'react-native-image-picker';
+import Toast from 'react-native-toast-message';
 
 const { height, width } = Dimensions.get('screen');
 
@@ -342,20 +343,31 @@ const ProfileScreen = ({ navigation }) => {
 
 
 
-  // Logout function with stack clearing
   const handleLogout = async () => {
     try {
-      await auth().signOut(); // Sign out from Firebase
-      // Reset navigation stack to SignIn screen
-      navigation.reset({
-        index: 0,
-        routes: [{ name: 'SignIn' }],
+      await auth().signOut(); 
+      Toast.show({
+        type: 'success',
+        text1: 'Logout Successful',
+        text2: 'You have been logged out.',
       });
+  
+      setTimeout(() => {
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'SignIn' }],
+        });
+      }, 1500); // Thoda delay tak toast dikhane ke liye
     } catch (error) {
       console.error('Logout error:', error);
-      Alert.alert('Error', 'Failed to logout.');
+      Toast.show({
+        type: 'error',
+        text1: 'Logout Failed',
+        text2: 'Something went wrong. Try again.',
+      });
     }
   };
+  
 
   return (
     <SafeAreaView style={{ flex: 1 }}>

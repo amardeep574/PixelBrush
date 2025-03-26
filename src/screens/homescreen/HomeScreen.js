@@ -43,7 +43,8 @@ export default function HomeScreen() {
       <LinearGradient colors={['#26525A', '#B4C6D0']} style={styles.container}>
         <HeaderComponent
           title={'Home'}
-          // profileImage={require('../../assets/images/profile_img.png')}
+          profileImage={require('../../assets/images/user.png')}
+          // profileImage={profileImage ? { uri: profileImage } : require('../../assets/images/user.png')} // Use fetched image or default
           headerStyle={styles.header}
           titleStyle={styles.title}
           profileOnPress={() => navigation.navigate('Profile')}
@@ -100,8 +101,9 @@ const StartNewWork = ({ selectedBox, setSelectedBox, navigateToScreen }) => {
 
 const PastWorkHistory = ({ navigation }) => {
   const [pastWorkData, setPastWorkData] = useState([]);
-  
-  
+
+
+
   // useEffect(() => {
   //   fetchData()
   // }, [])
@@ -123,7 +125,7 @@ const PastWorkHistory = ({ navigation }) => {
   //     Alert.alert('Error', 'Failed to fetch data.');
   //   }
   // };
-  
+
   // useEffect(() => {
   //   const fetchPastWork = async () => {
   //     try {
@@ -164,8 +166,8 @@ const PastWorkHistory = ({ navigation }) => {
         data={pastWorkData}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <TouchableOpacity 
-            style={styles.itemContainer} 
+          <TouchableOpacity
+            style={styles.itemContainer}
             onPress={() => navigation.navigate('Prep', { docId: item.id, label: 'Prep' })}
           >
             <Image source={{ uri: item.images?.[0] || 'https://via.placeholder.com/50' }} style={styles.image} />
@@ -309,8 +311,8 @@ const styles = StyleSheet.create({
   },
   image: { width: 50, height: 50, borderRadius: 8, marginRight: 10 },
   textContainer: { flex: 1 },
-  projectName: { fontWeight: '600', fontSize: 13,fontFamily:"Montserrat-Medium",color:'#FFFFFF' },
+  projectName: { fontWeight: '600', fontSize: 13, fontFamily: "Montserrat-Medium", color: '#FFFFFF' },
   jobContact: { fontSize: 12, color: 'gray' },
-  address: { fontSize: 10, color: '#FFFFFF' ,fontFamily:"Montserrat-Regular",fontWeight:"500"},
+  address: { fontSize: 10, color: '#FFFFFF', fontFamily: "Montserrat-Regular", fontWeight: "500" },
 });
 

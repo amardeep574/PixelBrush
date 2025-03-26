@@ -172,6 +172,31 @@ const Prep = ({ navigation }) => {
 
 
 
+  // const handleDelete = async () => {
+  //   if (!isEditing) return;
+  //   Alert.alert(
+  //     'Confirm Delete',
+  //     'Are you sure you want to delete this form?',
+  //     [
+  //       { text: 'Cancel', style: 'cancel' },
+  //       {
+  //         text: 'Delete',
+  //         style: 'destructive',
+  //         onPress: async () => {
+  //           try {
+  //             await firestore().collection("formData").doc(docId).delete();
+  //             Alert.alert('Success', 'Form deleted successfully!');
+              
+  //             navigation.goBack();
+  //           } catch (error) {
+  //             Alert.alert('Error', 'Failed to delete data.');
+  //           }
+  //         },
+  //       },
+  //     ]
+  //   );
+  // };
+
   const handleDelete = async () => {
     if (!isEditing) return;
     Alert.alert(
@@ -185,16 +210,27 @@ const Prep = ({ navigation }) => {
           onPress: async () => {
             try {
               await firestore().collection("formData").doc(docId).delete();
-              Alert.alert('Success', 'Form deleted successfully!');
+              Toast.show({
+                type: 'success',
+                text1: 'Success',
+                text2: 'Form deleted successfully!',
+                position: 'top',
+              });
               navigation.goBack();
             } catch (error) {
-              Alert.alert('Error', 'Failed to delete data.');
+              Toast.show({
+                type: 'error',
+                text1: 'Error',
+                text2: 'Failed to delete data.',
+                position: 'top',
+              });
             }
           },
         },
       ]
     );
   };
+  
 
   return (
     <SafeAreaView style={styles.safeAreaViewContainer}>
