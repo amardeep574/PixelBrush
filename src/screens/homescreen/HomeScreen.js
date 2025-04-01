@@ -156,9 +156,9 @@ const PastWorkHistory = ({ navigation }) => {
     }, [])
   );
 
-  const handlePress = (item) => {
-    navigation.navigate('DisplayPastHistory', { item });
-  };
+  // const handlePress = (item) => {
+  //   navigation.navigate('DisplayPastHistory', { item });
+  // };
 
   return (
     <SafeAreaView style={styles.containerPastWork}>
@@ -175,6 +175,7 @@ const PastWorkHistory = ({ navigation }) => {
               <Text style={styles.projectName}>{item.projectName}</Text>
               {/* <Text style={styles.jobContact}>{item.jobContact}</Text> */}
               <Text style={styles.address}>{item.address}</Text>
+              {/* <Text>View History</Text> */}
             </View>
           </TouchableOpacity>
         )}
@@ -183,6 +184,7 @@ const PastWorkHistory = ({ navigation }) => {
 
   );
 };
+
 
 const styles = StyleSheet.create({
   safeArea: {
@@ -315,4 +317,6 @@ const styles = StyleSheet.create({
   jobContact: { fontSize: 12, color: 'gray' },
   address: { fontSize: 10, color: '#FFFFFF', fontFamily: "Montserrat-Regular", fontWeight: "500" },
 });
+
+
 

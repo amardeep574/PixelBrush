@@ -117,7 +117,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     // paddingHorizontal: 55,
     // backgroundColor:'red'
-    paddingBottom: height * 0.16
+    paddingBottom: height * 0.18
   },
   title: {
     fontFamily: "Montserrat-Bold",

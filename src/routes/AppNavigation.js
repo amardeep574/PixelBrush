@@ -15,11 +15,6 @@ import Toast from 'react-native-toast-message';
 
 
 
-
-
-
-
-
 const Stack = createStackNavigator() // Move this outside
 
 const AppNavigation = () => {
@@ -37,7 +32,6 @@ const AppNavigation = () => {
         <Stack.Screen name='Home' component={HomeScreen} options={{headerShown:false}}  />
         <Stack.Screen name='Profile' component={ProfileScreen} options={{headerShown:false}} />
         {/* <Stack.Screen name='DisplayPastHistory' component={DisplayPastHistory} options={{headerShown:false}} /> */}
-      
       
       </Stack.Navigator>
       <Toast />

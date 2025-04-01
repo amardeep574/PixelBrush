@@ -368,6 +368,7 @@ const ProfileScreen = ({ navigation }) => {
     }
   };
   
+  
 
   return (
     <SafeAreaView style={{ flex: 1 }}>

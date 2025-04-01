@@ -1,9 +1,54 @@
 // Header.js
-import React from 'react';
+import { useFocusEffect } from '@react-navigation/native';
+import React, { useCallback, useState } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons'; // or any other icon set
+import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
 
 const HeaderComponent = ({ onBackPress, title, profileImage, headerStyle, titleStyle,profileOnPress }) => {
+
+  const [userData, setUserData] = useState({
+    name: '',
+    email: '',
+    profileImage: null,
+  });
+
+  // Load user data from Firestore
+  useFocusEffect(
+    useCallback(
+      () => {
+        const loadUserData = async () => {
+          try {
+            const user = auth().currentUser;
+            if (user) {
+              const userDoc = await firestore().collection('users').doc(user.uid).get();
+              if (userDoc.exists) {
+                const data = userDoc.data();
+                setUserData({
+                  name: data.name || '',
+                  email: user.email || '',
+                  profileImage: data.profileImage || null,
+                });
+              } else {
+                setUserData({
+                  name: '',
+                  email: user.email || '',
+                  profileImage: null,
+                });
+              }
+            }
+          } catch (error) {
+            console.error('Error loading user data:', error);
+          }
+        };
+        loadUserData();
+      },
+      [],
+    )
+  )
+  
+
   return (
     <View style={[styles.header, headerStyle]}>
       {/* Conditionally render the back button */}
@@ -14,7 +59,8 @@ const HeaderComponent = ({ onBackPress, title, profileImage, headerStyle, titleS
       )}
       <Text style={[styles.title, titleStyle]}>{title}</Text>
       <TouchableOpacity onPress={profileOnPress}>
-      <Image source={profileImage} style={styles.profileImage}  />
+        {userData?.profileImage!=="" || userData?.profileImage!==null || userData?.profileImage!==undefined?  <Image source={{uri:userData?.profileImage}} style={styles.profileImage}  />:
+         <Image source={ profileImage} style={styles.profileImage}  />}
       </TouchableOpacity>
     </View>
   );

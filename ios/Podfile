@@ -14,21 +14,13 @@ if linkage != nil
   use_frameworks! :linkage => linkage.to_sym
 end
 
-use_modular_headers! # Add this line globally
+# use_modular_headers! # Add this line globally
 
 target 'Uncle_John' do
   config = use_native_modules!
- 
-    # Your Firebase pods
-  pod 'FirebaseAuth'
-  pod 'FirebaseCoreInternal'
-  pod 'FirebaseCrashlytics'
-  pod 'FirebaseFirestore'
-  pod 'FirebaseSessions'
-  pod 'FirebaseStorage'
 
-  # SocketRocket pod with modular headers disabled
-  pod 'SocketRocket', :modular_headers => false
+  use_frameworks! :linkage => :static
+  $RNFirebaseAsStaticFramework = true
 
   # Add any other pods here
 

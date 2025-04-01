@@ -7,7 +7,7 @@ import GlobalButtonComp from '../../components/button_component/GlobalButtonComp
 
 const { width, height } = Dimensions.get('screen');
 
-const DropdownComp = ({ title, fields, onValuesChange, initialValues, collectionName }) => {
+const DropdownComp = ({ title, fields, onValuesChange, initialValues, collectionName,isEditable }) => {
   const [expanded, setExpanded] = useState(false);
   const [values, setValues] = useState(
     initialValues || fields.reduce((acc, field) => ({ ...acc, [field]: '' }), {})
@@ -140,11 +140,12 @@ const DropdownComp = ({ title, fields, onValuesChange, initialValues, collection
                   style={styles.input}
                   inputStyle={styles.inputText}
                   keyboardType="numeric"
-                  editable={item !== 'total' && item !== 'final total'}
+                  editable={item !== 'total' && item !== 'final total' && !isEditable}
                 />
               </View>
             )}
           />
+          {!isEditable &&
           <View style={styles.buttonContainer}>
             <GlobalButtonComp
               title="Edit"
@@ -164,7 +165,7 @@ const DropdownComp = ({ title, fields, onValuesChange, initialValues, collection
               style={[styles.smallBtn, { backgroundColor: '#26525A' }]}
               textStyle={styles.btnTextStyle}
             />
-          </View>
+          </View>}
           
         </View>
       )}
@@ -238,5 +239,6 @@ const styles = StyleSheet.create({
 });
 
 export default DropdownComp;
+
 
 

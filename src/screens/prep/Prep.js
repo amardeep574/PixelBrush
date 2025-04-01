@@ -47,6 +47,7 @@ const Prep = ({ navigation }) => {
   console.log("Form----Data---->", formData)
   const [isEditing, setIsEditing] = useState(!!docId);
   // const collectionName = getCollectionName(label); // Dynamic collection name
+  
 
 
   useEffect(() => {
@@ -156,7 +157,7 @@ const Prep = ({ navigation }) => {
           type: 'success',
           text1: 'Success',
           text2: 'Form data saved successfully!',
-          position: 'top', 
+          position: 'top',
         });
       }
       navigation.goBack();
@@ -186,7 +187,7 @@ const Prep = ({ navigation }) => {
   //           try {
   //             await firestore().collection("formData").doc(docId).delete();
   //             Alert.alert('Success', 'Form deleted successfully!');
-              
+
   //             navigation.goBack();
   //           } catch (error) {
   //             Alert.alert('Error', 'Failed to delete data.');
@@ -230,19 +231,21 @@ const Prep = ({ navigation }) => {
       ]
     );
   };
-  
+
 
   return (
     <SafeAreaView style={styles.safeAreaViewContainer}>
       <LinearGradient colors={['#26525A', '#B4C6D0']} style={styles.gradient}>
-        <HeaderComponent title={label} onBackPress={() => navigation.goBack()} headerStyle={styles.header} titleStyle={styles.headerTitle} />
+        <HeaderComponent title={isEditing?"History": label} 
+        onBackPress={() => navigation.goBack()} headerStyle={styles.header} titleStyle={styles.headerTitle} />
         <ScrollView>
           <View style={{ flexDirection: 'row', marginVertical: 20 }}>
             <View style={styles.container}>
               <Text style={styles.projectNameHeading}>Project Name</Text>
               <TextInputComp
                 placeholder="Project name"
-                inputStyle={styles.inputPlaceholder}
+                editable={isEditing? false:true}
+                inputStyle={styles.inputPlaceholderStyle}
                 style={styles.textInputProjectName}
                 value={formData.projectName}
                 onChangeText={(text) => setFormData({ ...formData, projectName: text })}
@@ -252,7 +255,8 @@ const Prep = ({ navigation }) => {
               <Text style={styles.projectNameHeading}>Job Contact</Text>
               <TextInputComp
                 placeholder="Job contact"
-                inputStyle={styles.inputPlaceholder}
+                editable={isEditing? false:true}
+                inputStyle={styles.inputPlaceholderStyle}
                 style={styles.textInputProjectName}
                 value={formData.jobContact}
                 onChangeText={(text) => setFormData({ ...formData, jobContact: text })}
@@ -263,7 +267,8 @@ const Prep = ({ navigation }) => {
             <Text style={styles.address}>Address</Text>
             <TextInputComp
               placeholder="Address"
-              inputStyle={styles.inputPlaceholder}
+              editable={isEditing? false:true}
+              inputStyle={styles.inputPlaceholderStyle}
               style={styles.textInputAddress}
               value={formData.address}
               onChangeText={(text) => setFormData({ ...formData, address: text })}
@@ -279,12 +284,13 @@ const Prep = ({ navigation }) => {
                 onValuesChange={handleDropdownChange}
                 initialValues={formData.tasks[item.title]}
               // collectionName={collectionName} // Pass dynamic collection name to DropdownComp
+              isEditable={isEditing}
               />
             )}
           />
           <Text style={styles.uploadImage}>Upload Images</Text>
           <View style={styles.imageUploadContainer}>
-            <TouchableOpacity onPress={selectImages} style={styles.plusBtn}>
+            <TouchableOpacity onPress={selectImages} style={styles.plusBtn} disabled={isEditing? true:false}>
               <Image source={require('../../assets/images/add.png')} style={styles.addIcon} />
             </TouchableOpacity>
             <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.imageContainer}>
@@ -295,18 +301,20 @@ const Prep = ({ navigation }) => {
           </View>
         </ScrollView>
         <View style={{ flexDirection: 'column', justifyContent: 'space-around', marginBottom: 20 }}>
-          <GlobalButtonComp
+          {isEditing ? "" : <GlobalButtonComp
             title={isEditing ? 'Update' : 'Save & Add Other'}
             onPress={handleSubmit}
             style={styles.btn}
-          />
-          {isEditing && (
+          />}
+
+
+{isEditing &&
             <GlobalButtonComp
               title="Delete"
               onPress={handleDelete}
               style={[styles.btn, { backgroundColor: '#26525A', }]}
             />
-          )}
+          }
         </View>
       </LinearGradient>
     </SafeAreaView>
@@ -318,21 +326,65 @@ export default Prep;
 
 const styles = StyleSheet.create({
   safeAreaViewContainer: { flex: 1, width: width },
-  gradient: { flex: 1 },
-  inputPlaceholder: {
+  gradient: {
+    flex: 1
+  },
+  // inputPlaceholder: {
+  //   fontFamily: "Montserrat-Regular",
+  //   fontWeight: '400',
+  //   fontSize: 14,
+  //   lineHeight: 18,
+  //   color: '#535c60'
+  // },
+  inputPlaceholderStyle: {
     fontFamily: "Montserrat-Regular",
     fontWeight: '400',
     fontSize: 10,
-    lineHeight: 18,
-    color: '#535c60'
+    // lineHeight: 18,
+    color: '#535c60',
+    textAlign: 'left',
+    alignSelf: 'center',
   },
-  uploadImage: { fontSize: 10, color: '#FFFFFF', paddingHorizontal: 20, marginTop: 10 },
-  imageUploadContainer: { flexDirection: 'row', alignItems: 'center', padding: 20 },
-  plusBtn: { borderRadius: 10, width: 55, height: 55, justifyContent: 'center', alignItems: 'center', backgroundColor: '#D9D9D9' },
-  addIcon: { width: 20, height: 20 },
-  imageContainer: { flexDirection: 'row', },
-  uploadedImage: { width: 55, height: 55, borderRadius: 8, marginLeft: 8 },
-  btn: { width: width * 0.88, backgroundColor: '#26525A', borderRadius: 20, alignSelf: 'center', marginBottom: 20 },
+
+  uploadImage: {
+    fontSize: 10,
+    color: '#FFFFFF',
+    paddingHorizontal: 20,
+    marginTop: 10
+  },
+  imageUploadContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 20
+  },
+  plusBtn: {
+    borderRadius: 10,
+    width: 55,
+    height: 55,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#D9D9D9'
+  },
+  addIcon: {
+    width: 20,
+    height: 20
+  },
+  imageContainer: {
+    flexDirection: 'row',
+  },
+  uploadedImage: {
+    width: 55,
+    height: 55,
+    borderRadius: 8,
+    marginLeft: 8
+  },
+  btn: {
+    width: width * 0.88,
+    backgroundColor: '#26525A',
+    borderRadius: 20,
+    alignSelf: 'center',
+    marginBottom: 20
+  },
 
   headerTitle: {
     fontFamily: "Montserrat-Medium",
@@ -397,3 +449,5 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
 });
+
+
