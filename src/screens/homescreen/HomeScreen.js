@@ -102,44 +102,6 @@ const StartNewWork = ({ selectedBox, setSelectedBox, navigateToScreen }) => {
 const PastWorkHistory = ({ navigation }) => {
   const [pastWorkData, setPastWorkData] = useState([]);
 
-
-
-  // useEffect(() => {
-  //   fetchData()
-  // }, [])
-
-  // const fetchData = async () => {
-  //   try {
-  //     const doc = await firestore().collection("prepForms").get();
-  //     console.log("prep");
-
-  //     console.log("prep--data", doc._docs)
-  //     if (doc.exists) {
-  //       console.log("prep");
-
-  //       console.log("prep--data", doc.data())
-  //     } else {
-  //       Alert.alert('Error', 'Document not found!');
-  //     }
-  //   } catch (error) {
-  //     Alert.alert('Error', 'Failed to fetch data.');
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   const fetchPastWork = async () => {
-  //     try {
-  //       const snapshot = await firestore().collection("formData").get();
-  //       const fetchedData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-  //       setPastWorkData(fetchedData);
-  //     } catch (error) {
-  //       console.error("Error fetching past work data:", error);
-  //     }
-  //   };
-
-  //   fetchPastWork();
-  // }, []);
-
   useFocusEffect(
     useCallback(() => {
       const fetchPastWork = async () => {
@@ -155,10 +117,6 @@ const PastWorkHistory = ({ navigation }) => {
       fetchPastWork();
     }, [])
   );
-
-  // const handlePress = (item) => {
-  //   navigation.navigate('DisplayPastHistory', { item });
-  // };
 
   return (
     <SafeAreaView style={styles.containerPastWork}>

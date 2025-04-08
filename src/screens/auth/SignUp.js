@@ -176,7 +176,6 @@ const SignUp = ({ navigation }) => {
 
 export default SignUp;
 
-// Styles remain the same as in your original code
 
 const styles = StyleSheet.create({
     gradient: {

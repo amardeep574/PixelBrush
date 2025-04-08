@@ -24,23 +24,6 @@ const ForgotPassword = ({ navigation }) => {
         return Object.keys(newErrors).length === 0;
     };
 
-    // const handleSubmit = async () => {
-    //     if (validate()) {
-    //         try {
-    //             await auth().sendPasswordResetEmail(email);
-    //             Alert.alert(
-    //                 'Password Reset Email Sent',
-    //                 'Please check your email for instructions to reset your password.',
-    //                 [{ text: 'OK', onPress: () => navigation.navigate('SignIn') }]
-    //             );
-    //         } catch (error) {
-    //             console.error(error);
-    //             Alert.alert('Error', 'Failed to send password reset email. Please try again.');
-    //         }
-    //     }
-    // };
-
-
     const handleSubmit = async () => {
         if (validate()) {
             try {

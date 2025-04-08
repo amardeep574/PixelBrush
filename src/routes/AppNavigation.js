@@ -30,9 +30,7 @@ const AppNavigation = () => {
         <Stack.Screen name='ForgotPassword' component={ForgotPassword} options={{headerShown:false}} />
         <Stack.Screen name='Prep' component={Prep}  options={{headerShown:false}}/>
         <Stack.Screen name='Home' component={HomeScreen} options={{headerShown:false}}  />
-        <Stack.Screen name='Profile' component={ProfileScreen} options={{headerShown:false}} />
-        {/* <Stack.Screen name='DisplayPastHistory' component={DisplayPastHistory} options={{headerShown:false}} /> */}
-      
+        <Stack.Screen name='Profile' component={ProfileScreen} options={{headerShown:false}} />      
       </Stack.Navigator>
       <Toast />
     </NavigationContainer>

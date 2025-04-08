@@ -100,36 +100,7 @@ const Prep = ({ navigation }) => {
     );
   };
 
-  // const handleSubmit = async () => {
-  //   if (!formData.projectName || !formData.jobContact || !formData.address) {
-  //     Alert.alert('Error', 'Please fill all required fields!');
-  //     return;
-  //   }
-  //   try {
-  //     if (isEditing) {
-  //       await firestore().collection("formData").doc(docId).update({
-  //         ...formData,
-  //         updatedAt: firestore.FieldValue.serverTimestamp(),
-  //       });
-  //       Alert.alert('Success', 'Form data updated successfully!');
-  //     } else {
-  //       await firestore().collection("formData").add({
-  //         ...formData,
-  //         createdAt: firestore.FieldValue.serverTimestamp(),
-  //         // profileDetails:{
-  //         //   emailID:"",
-  //         //  name:"",
-  //         //  image:"",
-  //         //  id:0
-  //         // }
-  //       });
-  //       Alert.alert('Success', 'Form data saved successfully!');
-  //     }
-  //     navigation.goBack();
-  //   } catch (error) {
-  //     Alert.alert('Error', 'Failed to save/update data.');
-  //   }
-  // };
+  
 
   const handleSubmit = async () => {
     if (!formData.projectName || !formData.jobContact || !formData.address) {
@@ -171,32 +142,6 @@ const Prep = ({ navigation }) => {
     }
   };
 
-
-
-  // const handleDelete = async () => {
-  //   if (!isEditing) return;
-  //   Alert.alert(
-  //     'Confirm Delete',
-  //     'Are you sure you want to delete this form?',
-  //     [
-  //       { text: 'Cancel', style: 'cancel' },
-  //       {
-  //         text: 'Delete',
-  //         style: 'destructive',
-  //         onPress: async () => {
-  //           try {
-  //             await firestore().collection("formData").doc(docId).delete();
-  //             Alert.alert('Success', 'Form deleted successfully!');
-
-  //             navigation.goBack();
-  //           } catch (error) {
-  //             Alert.alert('Error', 'Failed to delete data.');
-  //           }
-  //         },
-  //       },
-  //     ]
-  //   );
-  // };
 
   const handleDelete = async () => {
     if (!isEditing) return;

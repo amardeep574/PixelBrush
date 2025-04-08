@@ -35,28 +35,6 @@ const SignIn = ({ navigation }) => {
         return Object.keys(newErrors).length === 0;
     };
 
-    // const handleSignIn = async () => {
-    //     if (validate()) {
-    //         setLoading(true);
-    //         try {
-    //             const userCredential = await auth().signInWithEmailAndPassword(email, password);
-    //             const user = userCredential.user;
-
-    //             // Save user info in AsyncStorage
-    //             await AsyncStorage.setItem('userInfo', JSON.stringify({ email: user.email, uid: user.uid }));
-
-    //             console.log('User signed in:', user);
-    //             alert('Sign-In Successful');
-    //             navigation.replace('Home');  // Navigate to Home screen after successful login
-    //         } catch (error) {
-    //             console.error('Error signing in:', error.message);
-    //             alert(error.message);
-    //         } finally {
-    //             setLoading(false);
-    //         }
-    //     }
-    // };
-
 
     const handleSignIn = async () => {
         if (validate()) {
